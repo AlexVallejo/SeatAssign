@@ -1,0 +1,8 @@
+*.bin
+*.obj
+*.exe
+*.dll
+*.pch
+*.user
+*.suo
+*.tlb
