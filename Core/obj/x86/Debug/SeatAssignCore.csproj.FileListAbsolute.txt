@@ -1,0 +1,4 @@
+C:\Users\avallejo\Desktop\SeatAssignCore\SeatAssignCore\bin\Debug\SeatAssignCore.exe
+C:\Users\avallejo\Desktop\SeatAssignCore\SeatAssignCore\bin\Debug\SeatAssignCore.pdb
+C:\Users\avallejo\Desktop\SeatAssignCore\SeatAssignCore\obj\x86\Debug\SeatAssignCore.exe
+C:\Users\avallejo\Desktop\SeatAssignCore\SeatAssignCore\obj\x86\Debug\SeatAssignCore.pdb

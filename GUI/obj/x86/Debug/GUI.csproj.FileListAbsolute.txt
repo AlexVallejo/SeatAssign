@@ -1,0 +1,10 @@
+C:\Users\avallejo\Desktop\ModelUN\ModelUN\bin\Debug\ModelUN.exe
+C:\Users\avallejo\Desktop\ModelUN\ModelUN\bin\Debug\ModelUN.pdb
+C:\Users\avallejo\Desktop\ModelUN\ModelUN\bin\Debug\en-US\ModelUN.resources.dll
+C:\Users\avallejo\Desktop\ModelUN\ModelUN\obj\x86\Debug\ModelUN.ModelUNAssign.resources
+C:\Users\avallejo\Desktop\ModelUN\ModelUN\obj\x86\Debug\ModelUN.Properties.Resources.resources
+C:\Users\avallejo\Desktop\ModelUN\ModelUN\obj\x86\Debug\ModelUN.ModelUNAssign.en-US.resources
+C:\Users\avallejo\Desktop\ModelUN\ModelUN\obj\x86\Debug\GUI.csproj.GenerateResource.Cache
+C:\Users\avallejo\Desktop\ModelUN\ModelUN\obj\x86\Debug\en-US\ModelUN.resources.dll
+C:\Users\avallejo\Desktop\ModelUN\ModelUN\obj\x86\Debug\ModelUN.exe
+C:\Users\avallejo\Desktop\ModelUN\ModelUN\obj\x86\Debug\ModelUN.pdb
