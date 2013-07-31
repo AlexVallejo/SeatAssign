@@ -14,7 +14,6 @@ namespace ModelUN
         public ModelUNAssign()
         {
             InitializeComponent();
-            
         }
 
         private void ModelUNForm_Load(object sender, EventArgs e)
@@ -25,7 +24,18 @@ namespace ModelUN
 
         private void process_Click(object sender, EventArgs e)
         {
+            progressBar.Minimum = 0;
+            progressBar.Maximum = 50;
+            progressBar.Value = progressBar.Minimum;
+            progressBar.Step = 1;
 
+            for (int i = 0; i < 60; i++)
+            {
+                System.Threading.Thread.Sleep(100);
+                progressBar.PerformStep();
+            }
+
+            MessageBox.Show("A worksheet has been added to the original spreadsheet with the seat assignments.");
         }
 
         private void inputSelect_Click(object sender, EventArgs e)
@@ -37,6 +47,8 @@ namespace ModelUN
             if (dialog.ShowDialog() == DialogResult.OK)
             {
                 string file = dialog.FileName;
+                Console.WriteLine(file);
+
                 try
                 {
                     //read file here
@@ -46,7 +58,7 @@ namespace ModelUN
                     Console.WriteLine(ex.ToString());
                 }
             }
-            Console.WriteLine(dialog.FileName);
+            
         }
 
         private void aboutToolStripMenuItem_Click(object sender, EventArgs e)

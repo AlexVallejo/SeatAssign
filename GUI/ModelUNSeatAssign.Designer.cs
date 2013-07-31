@@ -36,6 +36,8 @@
             this.instructionsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.inputSelect = new System.Windows.Forms.Button();
             this.info = new System.Windows.Forms.Label();
+            this.progressBar = new System.Windows.Forms.ProgressBar();
+            this.progressLabel = new System.Windows.Forms.Label();
             this.help.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -85,10 +87,22 @@
             resources.ApplyResources(this.info, "info");
             this.info.Name = "info";
             // 
+            // progressBar
+            // 
+            resources.ApplyResources(this.progressBar, "progressBar");
+            this.progressBar.Name = "progressBar";
+            // 
+            // progressLabel
+            // 
+            resources.ApplyResources(this.progressLabel, "progressLabel");
+            this.progressLabel.Name = "progressLabel";
+            // 
             // ModelUNAssign
             // 
             resources.ApplyResources(this, "$this");
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.Controls.Add(this.progressLabel);
+            this.Controls.Add(this.progressBar);
             this.Controls.Add(this.info);
             this.Controls.Add(this.inputSelect);
             this.Controls.Add(this.process);
@@ -111,6 +125,8 @@
         private System.Windows.Forms.ToolStripMenuItem instructionsToolStripMenuItem;
         private System.Windows.Forms.Button inputSelect;
         private System.Windows.Forms.Label info;
+        private System.Windows.Forms.ProgressBar progressBar;
+        private System.Windows.Forms.Label progressLabel;
     }
 }
 

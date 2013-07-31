@@ -2,3 +2,4 @@ C:\Users\avallejo\Desktop\ModelUN\Core\bin\Debug\Core.exe
 C:\Users\avallejo\Desktop\ModelUN\Core\bin\Debug\Core.pdb
 C:\Users\avallejo\Desktop\ModelUN\Core\obj\x86\Debug\Core.exe
 C:\Users\avallejo\Desktop\ModelUN\Core\obj\x86\Debug\Core.pdb
+C:\Users\avallejo\Desktop\ModelUN\Core\obj\x86\Debug\Core.csproj.ResolveComReference.cache
