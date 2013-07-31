@@ -14,6 +14,10 @@ namespace Core
             List<Country> countries = new List<Country>();  //List of all countries
             List<Person> extra = new List<Person>();        //temp storage for unassigned applicants
 
+            string filePath = "C:\\Users\\avallejo\\Desktop\\nhsmun_registration.xlsx";
+
+            readPersons(filePath, persons);
+
             //Sort the list of applicants by their composite score
             persons.Sort();
 
@@ -48,6 +52,30 @@ namespace Core
                 }
             }
             return false;
+        }
+
+        private static void readPersons(string filePath, List<Person> persons)
+        {
+            Excel.Application app = new Excel.Application();
+            Excel.Workbook book = app.Workbooks.Open(filePath);
+            Excel._Worksheet sheet = book.Sheets[1];
+            Excel.Range range = sheet.UsedRange;
+
+            int rows = range.Rows.Count;
+            int cols = range.Columns.Count;
+
+            string name;
+            double score;
+            Region region;
+
+            for (int i = 4; i <= rows; i++)
+            {
+                name = range.Cells[i, 7].Value2.ToString();
+                score = 45.0;
+                region = Region.north;
+                persons.Add(new Person(new List<Country>(), score, name, region));
+            }
+            Console.WriteLine("List post-processing examination....");
         }
 
         private static bool write(List<Country> countries)

@@ -8,7 +8,7 @@ namespace Core
     class Person : IComparable<Person>
     {
         public List<Country> prefs { get; set; }
-        public float score { get; set; }
+        public double score { get; set; }
         public string name { get; set; }
         public List<Region> regions { get; set; }
 
@@ -17,15 +17,16 @@ namespace Core
             //chained no-arg constructor
         }
 
-        public Person(List<Country> countries, float score, string name, Region region)
+        public Person(List<Country> countries, double score, string name, Region region)
         {
             this.prefs = countries;
             this.score = score;
             this.name = name;
+            this.regions = new List<Region>();
             this.regions.Add(region);
         }
 
-        public Person(List<Country> countries, float score, string name, List<Region> regions)
+        public Person(List<Country> countries, double score, string name, List<Region> regions)
         {
             this.prefs = countries;
             this.score = score;
