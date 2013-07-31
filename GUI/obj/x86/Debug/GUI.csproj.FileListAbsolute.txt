@@ -20,3 +20,4 @@ C:\Users\avallejo\Desktop\ModelUN\GUI\obj\x86\Debug\GUI.csproj.GenerateResource.
 C:\Users\avallejo\Desktop\ModelUN\GUI\obj\x86\Debug\en-US\ModelUN.resources.dll
 C:\Users\avallejo\Desktop\ModelUN\GUI\obj\x86\Debug\ModelUN.exe
 C:\Users\avallejo\Desktop\ModelUN\GUI\obj\x86\Debug\ModelUN.pdb
+C:\Users\avallejo\Desktop\ModelUN\GUI\obj\x86\Debug\ModelUN.About.resources

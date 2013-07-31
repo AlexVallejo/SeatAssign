@@ -29,7 +29,7 @@ namespace ModelUN
             progressBar.Value = progressBar.Minimum;
             progressBar.Step = 1;
 
-            for (int i = 0; i < 60; i++)
+            for (int i = 0; i <= 50; i++)
             {
                 System.Threading.Thread.Sleep(100);
                 progressBar.PerformStep();
@@ -63,7 +63,8 @@ namespace ModelUN
 
         private void aboutToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            MessageBox.Show("About command executed");
+            About form = new About();
+            form.Show();
         }
 
         private void instructionsToolStripMenuItem_Click(object sender, EventArgs e)
