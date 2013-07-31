@@ -13,13 +13,13 @@ namespace Core
         public List<Person> persons { get; set; }
 
         //Default no-arg constructor, should not be used.
-        public Country() : this(0,"", Region.east)
+        public Country() : this(0,"", Region.unknown)
         {    
         }
 
         //Expected to be used when populating the person's preferences list
         //region does not affect comparison so it is ignored
-        public Country(string name) : this(name, Region.north)
+        public Country(string name) : this(name, Region.unknown)
         {
         }
 

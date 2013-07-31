@@ -1,4 +1,5 @@
 ﻿namespace Core
 {
-    public enum Region { north, south, east, west };
+    public enum Region { unknown = 0, africaNorthMiddleEast = 21, AfricaAfricaSubSaharan, asiaCentral, asiaEastSouthEast, 
+        asiaSouth, EurpoeEast, europeWestern, latinAmerica, oceania, usCanadaNZAustralia };
 }

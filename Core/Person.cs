@@ -12,7 +12,7 @@ namespace Core
         public string name { get; set; }
         public List<Region> regions { get; set; }
 
-        public Person() : this(new List<Country>(),-1,"",Region.north)
+        public Person() : this(new List<Country>(),-1,"",Region.unknown)
         {
             //chained no-arg constructor
         }

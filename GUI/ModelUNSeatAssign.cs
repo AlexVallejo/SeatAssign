@@ -24,6 +24,13 @@ namespace ModelUN
 
         private void process_Click(object sender, EventArgs e)
         {
+            if (System.Diagnostics.Process.GetProcessesByName("excel").Length > 0)
+            {
+                MessageBox.Show("You must close Microsoft Excel before using this tool.");
+                return;
+            }
+
+            
             progressBar.Minimum = 0;
             progressBar.Maximum = 50;
             progressBar.Value = progressBar.Minimum;

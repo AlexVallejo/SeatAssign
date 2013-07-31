@@ -43,7 +43,7 @@ namespace Core
             {
                 i = countries.FindIndex(country => country.name.Equals(pref.name, StringComparison.OrdinalIgnoreCase));
                 //assuming here there is no mismatch between person preferences country names and country names
-                //example sln: throw alert box that says "person.name picked country person.pref.name which is not in the list
+                //example sln: throw alert box that says "person.name picked an unknown country person.pref.name which is not in the list
                 //of possible choices"
                 if (!countries[i].isFull())
                 {
@@ -58,24 +58,42 @@ namespace Core
         {
             Excel.Application app = new Excel.Application();
             Excel.Workbook book = app.Workbooks.Open(filePath);
-            Excel._Worksheet sheet = book.Sheets[1];
+            Excel.Worksheet sheet = book.Sheets[1];
             Excel.Range range = sheet.UsedRange;
 
             int rows = range.Rows.Count;
-            int cols = range.Columns.Count;
 
-            string name;
-            double score;
-            Region region;
+            //Variables used for creating the new people
+            List<Region> regions;
+            List<Country> countries;
+            bool atLeastOneRegion = false;
 
+            //Assign each person their values fro the spreadsheet. Column locations are fixed
             for (int i = 4; i <= rows; i++)
             {
-                name = range.Cells[i, 7].Value2.ToString();
-                score = 45.0;
-                region = Region.north;
-                persons.Add(new Person(new List<Country>(), score, name, region));
+                string name = range.Cells[i, 7].Value2.ToString();
+                double score = 45.0; //score location
+                regions = new List<Region>();
+                countries = new List<Country>();
+
+                for (int j = 21; j <= 30; j++)
+                {
+                    var regionInput = range.Cells[i, j].Value2;
+                    if (regionInput != null)
+                    {
+                        regions.Add( (Region)j );
+                        atLeastOneRegion = true;
+                    }
+                }
+
+                if (atLeastOneRegion)
+                    persons.Add(new Person(countries, score, name, regions));
+                else
+                    persons.Add(new Person(countries, score, name, Region.unknown));
             }
-            Console.WriteLine("List post-processing examination....");
+
+            //Quit the Excel app before proceding
+            app.Quit();
         }
 
         private static bool write(List<Country> countries)
