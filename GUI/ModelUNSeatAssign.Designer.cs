@@ -109,6 +109,7 @@
             this.Controls.Add(this.help);
             this.MainMenuStrip = this.help;
             this.Name = "ModelUNAssign";
+            this.Load += new System.EventHandler(this.ModelUNAssign_Load);
             this.help.ResumeLayout(false);
             this.help.PerformLayout();
             this.ResumeLayout(false);

@@ -69,7 +69,13 @@ namespace ModelUN
 
         private void instructionsToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            MessageBox.Show("Instructions command executed");
+            Instructions form = new Instructions();
+            form.Show();
+        }
+
+        private void ModelUNAssign_Load(object sender, EventArgs e)
+        {
+
         }
     }
 }
