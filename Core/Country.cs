@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Collections.Generic;
 using System.Text;
 
 namespace Core
@@ -8,37 +6,51 @@ namespace Core
     class Country
     {
         public string name { get; private set; }
-        public int capacity { get; private set; }
+        public int max { get; private set; }
+        private int min { get; set; }
         public Region region { get; private set; }
-        public List<Person> persons { get; set; }
+        public List<Applicant> schools { get; set; }
+        public int capacity { get; private set; }
 
         //Default no-arg constructor, should not be used.
-        public Country() : this(0,"", Region.unknown)
+        public Country() : this("", Region.unknown, 0, 0)
         {    
         }
 
-        //Expected to be used when populating the person's preferences list
+        //Expected to be used when populating the applicant's preferences list
         //region does not affect comparison so it is ignored
         public Country(string name) : this(name, Region.unknown)
         {
         }
 
-        //Expected to be used when reading in the list of countries. Assumes 1 to be the default capacity.
-        public Country(string name, Region region) : this(1, name, region)
+        //Expected to be used when reading in the list of countries. Assumes 1 to be the default max capacity.
+        public Country(string name, Region region) : this(name, region, 1)
+        {
+        }
+
+        public Country(string name, Region region, int max)
+            : this(name, region, 1, max)
         {
         }
 
         //Written for flexability, can specify country size here
-        public Country(int capacity, string name, Region region)
+        public Country(string name, Region region, int min, int max) : this(name, region, min, max, 1)
         {
-            this.capacity = capacity;
+        }
+
+        public Country(string name, Region region, int min, int max, int capacty)
+        {
+            this.min = min;
+            this.max = max;
             this.name = name;
             this.region = region;
+            this.capacity = capacty;
+            schools = new List<Applicant>();
         }
 
         public bool isFull()
         {
-            return this.capacity == persons.Count;
+            return this.capacity == schools.Count;
         }
 
         public override string ToString()
@@ -47,8 +59,8 @@ namespace Core
 
             builder.Append(this.name + ":\n");
 
-            foreach (Person person in persons)
-                builder.Append(person.name + "\n");
+            foreach (Applicant school in schools)
+                builder.Append(school.name + "\n");
             
             builder.Append("\n");
             
