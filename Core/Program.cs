@@ -15,6 +15,7 @@ namespace Core
         private static List<Applicant> extra;   //temp storage for unassigned applicants
         private static Hashtable table;         //Holds Region enum values and string names
         private static Excel.Application app;   //The Excel app. MUST BE TERMINATED BEFORE PROGRAM QUITS.
+        private static string filepath = "C:\\Users\\avallejo\\Desktop\\sample_registration.xlsx";
 
         static void Main(string[] args)
         {
@@ -22,11 +23,9 @@ namespace Core
             countries = new List<Country>();  
             extra = new List<Applicant>();       
 
-            string filePath = "C:\\Users\\avallejo\\Desktop\\sample_registration.xlsx";
-
             //Load the applicants and countries
             loadCountries("countries.txt");
-            loadApplicants(filePath);
+            loadApplicants(filepath);
 
             //Sort the list of applicants by their composite score in ASCENDING ORDER
             schools.Sort();
@@ -45,17 +44,20 @@ namespace Core
 
             //If all applicants have been assigned, write the applicants
             if (extra.Count < 1)
-                write(countries);
+                write(countries, filepath);
             else
             {
                 extra.Sort();
                 extra.Reverse();
                 assignExtras();
-                write(countries);
+                write(countries,filepath);
             }
 
         }
 
+        /// <summary>
+        /// Assign the any extra schools to a country based on country preferences and region preferences
+        /// </summary>
         private static void assignExtras()
         {
             /*
@@ -95,6 +97,12 @@ namespace Core
                 Console.WriteLine("CRITICAL ERROR. SOME SCHOOLS UNASSIGNED!");
         }
 
+        /// <summary>
+        /// Assign an Applicant to one country
+        /// </summary>
+        /// <param name="school">The Applicant to be assigned</param>
+        /// <param name="iteration">The iteration of assignment (1 or 2)</param>
+        /// <returns></returns>
         private static bool applicantAssignedToOneCountry(Applicant school, int iteration)
         {
             //first iteration when preferences are taken into account
@@ -129,6 +137,10 @@ namespace Core
             return false;
         }
 
+        /// <summary>
+        /// Load the list of countries from a .txt file
+        /// </summary>
+        /// <param name="filePath">The path of the .txt file</param>
         private static void loadCountries(string filePath)
         {
             try
@@ -178,6 +190,11 @@ namespace Core
             }
         }
 
+        /// <summary>
+        /// Match a string representing a region name to its associated enum.
+        /// </summary>
+        /// <param name="regionName">String representation of the region name</param>
+        /// <returns>Enum representing the region name</returns>
         private static Region matchRegion(string regionName)
         {
             //starts at 5 because there is a 1:1 match between region enum vlaues and their column number in the excel sheet
@@ -185,6 +202,7 @@ namespace Core
             StreamReader reader = new StreamReader("regions.txt");
             string line;
 
+            //If the table is uninitialized, initialize it only once
             if (table == null)
             {
                 table = new Hashtable();
@@ -213,6 +231,11 @@ namespace Core
             return Region.unknown;
         }
 
+        /// <summary>
+        /// Assign an applicant to a school based on country preferences read from the input file
+        /// </summary>
+        /// <param name="school">The Applicant to assign</param>
+        /// <returns>True if the assignment has been made, false otherwise</returns>
         private static bool assignToCountry(Applicant school)
         {
 
@@ -247,6 +270,10 @@ namespace Core
             return false;
         }
 
+        /// <summary>
+        /// Load applicant data from the input spreadsheet
+        /// </summary>
+        /// <param name="filePath">Filepath of the .xlsx file containing the applicant information</param>
         private static void loadApplicants(string filePath)
         {
             app = new Excel.Application();
@@ -280,9 +307,10 @@ namespace Core
 
                         if (prefToAdd == null)
                         {
-                            Console.WriteLine("Input mismatch exception. " + name + " entered " + pref);
-                            Console.WriteLine(pref + " is not in the list of countries.");
-                            Console.WriteLine(name + " may be assigned to a random country");
+                            Console.WriteLine("\nInput mismatch exception. \"" + name + "\" entered \"" + pref + "\"");
+                            Console.WriteLine("\"" + pref + "\" is not in the list of countries.");
+                            Console.WriteLine(name + "'s assignment may be incorrect.\n");
+                            Console.WriteLine("Please correct this input error and run the tool again.");
                         }
 
                         else
@@ -316,24 +344,48 @@ namespace Core
             app.Quit();
         }
 
-        private static bool write(List<Country> countries)
+        /// <summary>
+        /// Write the list of countries back to the Excel file
+        /// </summary>
+        /// <param name="countries">The list of countries ot be written</param>
+        /// <param name="filepath">The filepath of the file to be written to</param>
+        /// <returns>True if write operation completed successfully, false otherwise.</returns>
+        private static bool write(List<Country> countries, string filepath)
         {
-            try
+            object[,] output = new object[countries.Count + 1, 2];
+
+            output[0, 0] = "Country:";
+            output[0, 1] = "Assigned Applicants:";
+
+            int rowIndex = 1;
+            int maxColIndex = 0;
+            for (int i = 0; i < countries.Count; i++)
             {
-                //replace this with writing to the excel file
-                using (StreamWriter writer = new StreamWriter("output.txt"))
+                output[rowIndex, 0] = countries[i].name;
+
+                int colIndex = 1;
+                foreach (Applicant school in countries[i].schools)
                 {
-                    foreach (Country country in countries)
-                        writer.WriteLine(country.ToString());
+                    output[rowIndex, colIndex] = school.name;
+                    colIndex++;
+                    if (colIndex > maxColIndex)
+                        maxColIndex = colIndex;
                 }
-                return true;
+
+                rowIndex++;
             }
 
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex.ToString());
-                return false;
-            }
+            app = new Excel.Application();
+            Excel.Workbook book = app.Workbooks.Open(filepath);
+            book.Sheets.Add(After: book.Sheets[book.Sheets.Count]);
+            Excel.Worksheet sheet = book.Sheets[book.Sheets.Count];
+
+            Excel.Range range = sheet.get_Range("A1", Type.Missing);
+            range = range.get_Resize(countries.Count, maxColIndex);
+            range.set_Value(Type.Missing, output);
+
+            app.SaveWorkspace();
+            app.Quit();
         }//end write
     }//end Program
 }//end namespace
