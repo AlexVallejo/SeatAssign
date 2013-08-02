@@ -6,11 +6,15 @@ using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
+using Core;
+using System.IO;
 
 namespace ModelUN
 {
     public partial class ModelUNAssign : Form
     {
+        private string filepath;
+
         public ModelUNAssign()
         {
             InitializeComponent();
@@ -20,30 +24,53 @@ namespace ModelUN
         {
             //Implement drag and drop capibilities here
             //this.AllowDrop = true;
+
+            //Initialize the progress bar
+            progressBar.Minimum = 0;
+            progressBar.Maximum = 100;
+            progressBar.Value = progressBar.Minimum;
+            progressBar.Step = 15;
         }
 
         private void process_Click(object sender, EventArgs e)
         {
-            if (System.Diagnostics.Process.GetProcessesByName("excel").Length > 0)
-            {
-                MessageBox.Show("You must close Microsoft Excel before using this tool.");
+            if (!validRequisites())
                 return;
-            }
 
-            
-            progressBar.Minimum = 0;
-            progressBar.Maximum = 50;
-            progressBar.Value = progressBar.Minimum;
-            progressBar.Step = 1;
-
-            for (int i = 0; i <= 50; i++)
-            {
-                System.Threading.Thread.Sleep(100);
-                progressBar.PerformStep();
-            }
+            new ApplicantAssign(filepath, progressBar);
 
             MessageBox.Show("A worksheet has been added to the original spreadsheet with the seat assignments.");
         }
+
+        private bool validRequisites()
+        {
+            //verify Excel is closed
+            if (System.Diagnostics.Process.GetProcessesByName("excel").Length > 0)
+            {
+                MessageBox.Show("You must close Microsoft Excel before using this tool.");
+                return false;
+            }
+
+            if (filepath == null)
+            {
+                MessageBox.Show("You must select a valid input file first.");
+                return false;
+            }
+
+            if (!File.Exists("countries.txt"))
+            {
+                MessageBox.Show("Ensure the 'countries.txt' file exists");
+                return false;
+            }
+
+            if (!File.Exists("regions.txt"))
+            {
+                MessageBox.Show("Ensure the 'regions.txt' file exists");
+                return false;
+            }
+            
+            return true;
+         }
 
         private void inputSelect_Click(object sender, EventArgs e)
         {
@@ -53,8 +80,8 @@ namespace ModelUN
 
             if (dialog.ShowDialog() == DialogResult.OK)
             {
-                string file = dialog.FileName;
-                Console.WriteLine(file);
+                filepath = dialog.FileName;
+                Console.WriteLine(filepath);
 
                 try
                 {
@@ -78,11 +105,6 @@ namespace ModelUN
         {
             Instructions form = new Instructions();
             form.Show();
-        }
-
-        private void ModelUNAssign_Load(object sender, EventArgs e)
-        {
-
         }
     }
 }

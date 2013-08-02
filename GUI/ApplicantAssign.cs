@@ -8,41 +8,57 @@ namespace Core
 {
     class ApplicantAssign
     {
-        private List<Applicant> schools; //List of all applicants
-        private List<Country> countries; //List of all countries
-        private List<Applicant> extra;   //temp storage for unassigned applicants
-        private Hashtable table;         //Holds Region enum values and string names
-        private Excel.Application app;   //The Excel app. MUST BE TERMINATED BEFORE PROGRAM QUITS.
-        private string filepath;
+        private List<Applicant> schools;//List of all applicants
+        private List<Country> countries;//List of all countries
+        private List<Applicant> extra;  //temp storage for unassigned applicants
+        private Hashtable table;        //Holds Region enum values and string names
+        private string filepath;        //Filepath of the .xlsx file
+        private Excel.Application app;  //terminate the app before the program quits
+        private System.Windows.Forms.ProgressBar progressBar;   //Progress bar to update
 
         /// <summary>
         /// Assigns all applicants
         /// </summary>
-        public ApplicantAssign(string inputFile)
+        public ApplicantAssign(string inputFile, System.Windows.Forms.ProgressBar bar)
         {
             this.filepath = inputFile;
-            schools = new List<Applicant>();      
-            countries = new List<Country>();  
-            extra = new List<Applicant>();       
+            this.progressBar = bar;
+            schools = new List<Applicant>();
+            countries = new List<Country>();
+            extra = new List<Applicant>();
+
+            //Set up the Excel app
+            app = new Excel.Application();
+            app.AlertBeforeOverwriting = false;
+            app.DisplayAlerts = false;
 
             //Load the applicants and countries
             loadCountries("countries.txt");
+            progressBar.PerformStep();
+            
             loadApplicants(filepath);
+            progressBar.PerformStep();
 
             //Sort the list of applicants by their composite score in ASCENDING ORDER
             schools.Sort();
+            progressBar.PerformStep();
 
             //Keep only the top schools. There is a 1:1 association with country and school 
             for (int i = 0; schools.Count > countries.Count * 1 ; i++)
                 schools.Remove(schools[i]);
-
+            
+            progressBar.PerformStep();
+            
             //Put the list in decending order so a foreach can be used for simple prioritized iterations
             schools.Reverse();
+            progressBar.PerformStep();
 
             //Assign each applicant. If they are not assigned, add them to extra
             foreach (Applicant school in schools)
                 if (!assignToCountry(school))
                     extra.Add(school);
+            
+            progressBar.PerformStep();
 
             //If all applicants have been assigned, write the applicants
             if (extra.Count < 1)
@@ -55,6 +71,15 @@ namespace Core
                 write(countries,filepath);
             }
 
+            progressBar.PerformStep();
+            
+            //properly quit the excel application and remove it from memory
+            app.Quit();
+            System.Runtime.InteropServices.Marshal.FinalReleaseComObject(app);
+            app = null;
+            System.GC.Collect();
+
+            progressBar.Value = progressBar.Maximum;
         }
 
         /// <summary>
@@ -278,7 +303,7 @@ namespace Core
         /// <param name="filePath">Filepath of the .xlsx file containing the applicant information</param>
         private  void loadApplicants(string filePath)
         {
-            app = new Excel.Application();
+            //Excel.Application app = new Excel.Application();
             Excel.Workbook book = app.Workbooks.Open(filePath);
             Excel.Worksheet sheet = book.Sheets[1];
             Excel.Range range = sheet.UsedRange;
@@ -343,7 +368,7 @@ namespace Core
             }
 
             //Quit the Excel app before proceding
-            app.Quit();
+            //app.Quit();
         }
 
         /// <summary>
@@ -379,7 +404,7 @@ namespace Core
                     rowIndex++;
                 }
 
-                app = new Excel.Application();
+                //Excel.Application app = new Excel.Application();
                 Excel.Workbook book = app.Workbooks.Open(filepath);
                 book.Sheets.Add(After: book.Sheets[book.Sheets.Count]);
                 Excel.Worksheet sheet = book.Sheets[book.Sheets.Count];
@@ -389,8 +414,6 @@ namespace Core
                 range.set_Value(Type.Missing, output);
 
                 app.SaveWorkspace();
-                app.Quit();
-
                 return true;
             }
 

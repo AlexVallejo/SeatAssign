@@ -1,18 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Excel = Microsoft.Office.Interop.Excel;
-using System.IO;
-using System.Collections;
-
-namespace Core
+﻿namespace Core
 {
     class Program
     {
         static void Main(string[] args)
         {
-            new ApplicantAssign();
+            new ApplicantAssign("C:\\Users\\avallejo\\Desktop\\sample_registration.xlsx");
         }
     }
 }
