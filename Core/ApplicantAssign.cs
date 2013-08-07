@@ -4,45 +4,70 @@ using System.Collections.Generic;
 using System.IO;
 using Excel = Microsoft.Office.Interop.Excel;
 
-namespace Core
+namespace ModelUN.Core
 {
-    class ApplicantAssign
+    public class ApplicantAssign
     {
-        private List<Applicant> schools; //List of all applicants
-        private List<Country> countries; //List of all countries
-        private List<Applicant> extra;   //temp storage for unassigned applicants
-        private Hashtable table;         //Holds Region enum values and string names
-        private Excel.Application app;   //The Excel app. MUST BE TERMINATED BEFORE PROGRAM QUITS.
-        private string filepath;
+        private List<Applicant> schools;//List of all applicants
+        private List<Country> countries;//List of all countries
+        private List<Applicant> extra;  //temp storage for unassigned applicants
+        private Hashtable table;        //Holds Region enum values and string names
+        private string filepath;        //Filepath of the .xlsx file
+        private Excel.Application app;  //terminate the app before the program quits
+        private System.Windows.Forms.ProgressBar progressBar;   //Progress bar to update
 
+        /// <summary>
+        /// Used for the Console based core driver
+        /// </summary>
+        /// <param name="inputFile">input file for the assignment algorythm</param>
+        public ApplicantAssign(string inputFile)
+            : this(inputFile, new System.Windows.Forms.ProgressBar())
+        {
+        }
+      
         /// <summary>
         /// Assigns all applicants
         /// </summary>
-        public ApplicantAssign(string inputFile)
+        public ApplicantAssign(string filepath, System.Windows.Forms.ProgressBar bar)
         {
-            this.filepath = inputFile;
-            schools = new List<Applicant>();      
-            countries = new List<Country>();  
-            extra = new List<Applicant>();       
+            this.filepath = filepath;
+            this.progressBar = bar;
+            schools = new List<Applicant>();
+            countries = new List<Country>();
+            extra = new List<Applicant>();
+
+            //Set up the Excel app
+            app = new Excel.Application();
+            app.AlertBeforeOverwriting = false;
+            app.DisplayAlerts = false;
 
             //Load the applicants and countries
             loadCountries("countries.txt");
+            progressBar.PerformStep();
+
             loadApplicants(filepath);
+            progressBar.PerformStep();
 
             //Sort the list of applicants by their composite score in ASCENDING ORDER
             schools.Sort();
+            progressBar.PerformStep();
 
             //Keep only the top schools. There is a 1:1 association with country and school 
-            for (int i = 0; schools.Count > countries.Count * 1 ; i++)
+            for (int i = 0; schools.Count > countries.Count * 1; i++)
                 schools.Remove(schools[i]);
+
+            progressBar.PerformStep();
 
             //Put the list in decending order so a foreach can be used for simple prioritized iterations
             schools.Reverse();
+            progressBar.PerformStep();
 
             //Assign each applicant. If they are not assigned, add them to extra
             foreach (Applicant school in schools)
                 if (!assignToCountry(school))
                     extra.Add(school);
+
+            progressBar.PerformStep();
 
             //If all applicants have been assigned, write the applicants
             if (extra.Count < 1)
@@ -52,9 +77,18 @@ namespace Core
                 extra.Sort();
                 extra.Reverse();
                 assignExtras();
-                write(countries,filepath);
+                write(countries, filepath);
             }
 
+            progressBar.PerformStep();
+
+            //properly quit the excel application and remove it from memory
+            app.Quit();
+            System.Runtime.InteropServices.Marshal.FinalReleaseComObject(app);
+            app = null;
+            System.GC.Collect();
+
+            progressBar.Value = progressBar.Maximum;
         }
 
         /// <summary>
@@ -88,15 +122,18 @@ namespace Core
                 foreach (Applicant school in extra)
                     if (applicantAssignedToOneCountry(school, 2))
                         markedForRemoval.Push(school);
-            
+
             while (markedForRemoval.Count > 0)
                 extra.Remove(markedForRemoval.Pop());
-            
+
             //Hopefully we never get here. 
             //If we do, the size numbers are mismatched somewhere along the line 
             //I.E. the number of schools does not match the number of total schools qualified to be matched
             if (extra.Count > 0)
+            {
                 Console.WriteLine("CRITICAL ERROR. SOME SCHOOLS UNASSIGNED!");
+            }
+
         }
 
         /// <summary>
@@ -178,7 +215,7 @@ namespace Core
                                 Region region = matchRegion(values[1].ToLower().Trim());
                                 int min = int.Parse(values[2]);
                                 int max = int.Parse(values[3]);
-                                countries.Add(new Country(name,region,min,max));
+                                countries.Add(new Country(name, region, min, max));
                             }
                         }//end else too many/few cols
                     }//end while reader has another line
@@ -238,7 +275,7 @@ namespace Core
         /// </summary>
         /// <param name="school">The Applicant to assign</param>
         /// <returns>True if the assignment has been made, false otherwise</returns>
-        private  bool assignToCountry(Applicant school)
+        private bool assignToCountry(Applicant school)
         {
 
             //Find the country from List<Country> that is equal to the preference
@@ -251,7 +288,7 @@ namespace Core
                     Console.WriteLine("Input mismatch. " + school.name + " is unassigned");
                     return false;
                 }
-                
+
                 if (!pref.isFull())
                 {
                     pref.schools.Add(school);
@@ -276,9 +313,9 @@ namespace Core
         /// Load applicant data from the input spreadsheet
         /// </summary>
         /// <param name="filePath">Filepath of the .xlsx file containing the applicant information</param>
-        private  void loadApplicants(string filePath)
+        private void loadApplicants(string filePath)
         {
-            app = new Excel.Application();
+            //Excel.Application app = new Excel.Application();
             Excel.Workbook book = app.Workbooks.Open(filePath);
             Excel.Worksheet sheet = book.Sheets[1];
             Excel.Range range = sheet.UsedRange;
@@ -293,11 +330,11 @@ namespace Core
             for (int i = 3; i <= rows; i++)
             {
                 string name = range.Cells[i, 2].Value2.ToString().ToLower();
-                double score = range.Cells[i,3].Value2;
+                double score = range.Cells[i, 3].Value2;
                 int numChildren = Convert.ToInt32(range.Cells[i, 4].Value2);
                 regions = new List<Region>();
                 prefs = new List<Country>();
-                
+
                 //Assign countries
                 for (int j = 25; j <= 35; j++)
                 {
@@ -322,7 +359,7 @@ namespace Core
                     else
                         break;
                 }
-                
+
                 //Assign regions
                 bool atLeastOneRegion = false;
 
@@ -331,7 +368,7 @@ namespace Core
                     var regionInput = range.Cells[i, j].Value2;
                     if (regionInput != null)
                     {
-                        regions.Add( (Region)j );
+                        regions.Add((Region)j);
                         atLeastOneRegion = true;
                     }
                 }
@@ -343,7 +380,7 @@ namespace Core
             }
 
             //Quit the Excel app before proceding
-            app.Quit();
+            //app.Quit();
         }
 
         /// <summary>
@@ -352,7 +389,7 @@ namespace Core
         /// <param name="countries">The list of countries ot be written</param>
         /// <param name="filepath">The filepath of the file to be written to</param>
         /// <returns>True if write operation completed successfully, false otherwise.</returns>
-        private  bool write(List<Country> countries, string filepath)
+        private bool write(List<Country> countries, string filepath)
         {
             try
             {
@@ -379,7 +416,7 @@ namespace Core
                     rowIndex++;
                 }
 
-                app = new Excel.Application();
+                //Excel.Application app = new Excel.Application();
                 Excel.Workbook book = app.Workbooks.Open(filepath);
                 book.Sheets.Add(After: book.Sheets[book.Sheets.Count]);
                 Excel.Worksheet sheet = book.Sheets[book.Sheets.Count];
@@ -389,8 +426,6 @@ namespace Core
                 range.set_Value(Type.Missing, output);
 
                 app.SaveWorkspace();
-                app.Quit();
-
                 return true;
             }
 

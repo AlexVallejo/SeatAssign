@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Text;
 
-namespace Core
+namespace ModelUN.Core
 {
     class Country
     {
@@ -13,18 +13,21 @@ namespace Core
         public int capacity { get; private set; }
 
         //Default no-arg constructor, should not be used.
-        public Country() : this("", Region.unknown, 0, 0)
-        {    
+        public Country()
+            : this("", Region.unknown, 0, 0)
+        {
         }
 
         //Expected to be used when populating the applicant's preferences list
         //region does not affect comparison so it is ignored
-        public Country(string name) : this(name, Region.unknown)
+        public Country(string name)
+            : this(name, Region.unknown)
         {
         }
 
         //Expected to be used when reading in the list of countries. Assumes 1 to be the default max capacity.
-        public Country(string name, Region region) : this(name, region, 1)
+        public Country(string name, Region region)
+            : this(name, region, 1)
         {
         }
 
@@ -34,7 +37,8 @@ namespace Core
         }
 
         //Written for flexability, can specify country size here
-        public Country(string name, Region region, int min, int max) : this(name, region, min, max, 1)
+        public Country(string name, Region region, int min, int max)
+            : this(name, region, min, max, 1)
         {
         }
 
@@ -61,9 +65,9 @@ namespace Core
 
             foreach (Applicant school in schools)
                 builder.Append(school.name + "\n");
-            
+
             builder.Append("\n");
-            
+
             return builder.ToString();
         }
     }

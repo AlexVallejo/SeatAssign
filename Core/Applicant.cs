@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace Core
+namespace ModelUN.Core
 {
     class Applicant : IComparable<Applicant>
     {
@@ -14,13 +14,13 @@ namespace Core
         public int children { get; set; }
 
         //chained no-arg constructor
-        public Applicant() 
-            : this(new List<Country>(),-1,"",Region.unknown, 0)
+        public Applicant()
+            : this(new List<Country>(), -1, "", Region.unknown, 0)
         {
         }
 
         //No children, single region
-        public Applicant(List<Country> countries, double score, string name, Region region) 
+        public Applicant(List<Country> countries, double score, string name, Region region)
             : this(countries, score, name, region, 1)
         {
         }
@@ -29,7 +29,7 @@ namespace Core
         public Applicant(List<Country> countries, double score, string name, List<Region> regions)
             : this(countries, score, name, regions, 1)
         {
-        } 
+        }
 
         public Applicant(List<Country> countries, double score, string name, Region region, int childEntities)
         {
