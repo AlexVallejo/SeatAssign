@@ -121,7 +121,10 @@ namespace Core
             //If we do, the size numbers are mismatched somewhere along the line 
             //I.E. the number of schools does not match the number of total schools qualified to be matched
             if (extra.Count > 0)
+            {
                 Console.WriteLine("CRITICAL ERROR. SOME SCHOOLS UNASSIGNED!");
+            }
+                
         }
 
         /// <summary>
